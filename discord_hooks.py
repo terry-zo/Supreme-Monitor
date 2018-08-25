@@ -149,23 +149,25 @@ class Webhook:
 
         elif k.get("New") is not None:
             if k.get("Link") is not None and k.get("Image") is not None and k.get("Price") is not None:
-                self.set_title(title=k.get("New"))
+                self.set_title(title="New Product")
                 self.set_thumbnail(url=k.get("Image"))
+                self.add_field(name="Item", value=k.get("New"), inline=False)
                 self.add_field(name="Price", value=k.get("Price"), inline=False)
                 self.add_field(name="Link", value=f'[DESKTOP]({k.get("Link")})', inline=False)
 
         elif k.get("Restock") is not None:
             if k.get("Link") is not None and k.get("Image") is not None and k.get("Price") is not None:
-                self.set_title(title=k.get("Restock"))
+                self.set_title(title="Restock")
                 self.set_thumbnail(url=k.get("Image"))
+                self.add_field(name="Item", value=k.get("Restock"), inline=False)
                 self.add_field(name="Price", value=k.get("Price"), inline=False)
                 self.add_field(name="Link", value=f'[DESKTOP]({k.get("Link")})', inline=False)
 
         elif k.get("SoldOut") is not None:
             if k.get("Image") is not None:
-                self.set_title(title=k.get("SoldOut"))
+                self.set_title(title="Sold Out")
                 self.set_thumbnail(url=k.get("Image"))
-                self.add_field(name="Status", value=f'{k.get("SoldOut")} is now **sold out!**', inline=False)
+                self.add_field(name="Item", value=k.get("SoldOut"), inline=False)
 
         try:
             async with aiohttp.ClientSession(headers={'Content-Type': 'application/json'}, connector=aiohttp.TCPConnector(family=socket.AF_INET, verify_ssl=False,)) as session:

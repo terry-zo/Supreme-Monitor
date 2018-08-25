@@ -49,7 +49,7 @@ async def startup(link, proxies, headers, webhook_url, conn, c):
         response = await fetch(s, link, headers, choice(proxies))
     html_soup = soup(response, "html.parser")
     products = html_soup.findAll("div", {"class": "inner-article"})
-    webhook = Webhook(webhook_url, color=0xc11300)
+    webhook = Webhook(webhook_url, color=0x0061ff)  # bright blue
     await webhook.apost(Announcement=f"Monitoring **{len(products)} products** on supreme site.")
 
     async def productInformation(product, s):
@@ -91,7 +91,7 @@ async def monitor(link, proxies, headers, webhook_url, conn, c):
             if database_product[3] == False and sold_out == True:
                 print(f"{database_product[0]} is now sold out.")
                 # Send sold-out embed
-                webhook = Webhook(webhook_url, color=0xc11300) # red
+                webhook = Webhook(webhook_url, color=0xc11300)  # red
                 await webhook.apost(SoldOut=database_product[0], Link=database_product[1], Image=database_product[2])
 
                 # Update database
@@ -104,7 +104,7 @@ async def monitor(link, proxies, headers, webhook_url, conn, c):
             elif database_product[3] == True and sold_out == False:
                 print(f"{database_product[0]} restocked!")
                 # Send restock embed
-                webhook = Webhook(webhook_url, color=0x00ff4c) # bright green
+                webhook = Webhook(webhook_url, color=0x00ff4c)  # bright green
                 await webhook.apost(Restock=database_product[0], Link=database_product[1], Image=database_product[2], Price=database_product[4])
 
                 # Update database
@@ -125,7 +125,7 @@ async def monitor(link, proxies, headers, webhook_url, conn, c):
 
             print(f"{name} added to database.")
             # Send new-product embed
-            webhook = Webhook(webhook_url, color=0xf2ff00) # bright yellow
+            webhook = Webhook(webhook_url, color=0xf2ff00)  # bright yellow
             await webhook.apost(New=name, Link=link, Image=image, Price=price)
 
     futures = [asyncio.ensure_future(monitorProduct(product, s)) for product in products]
