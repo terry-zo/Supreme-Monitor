@@ -138,7 +138,7 @@ class Webhook:
         """
         utc_dt = datetime.datetime.utcnow()
         d = utc_dt - datetime.timedelta(hours=4)
-        self.set_footer(text=f"Supreme Monitor • {d.strftime('%I:%M:%S:%f %p')}")
+        self.set_footer(text=f"Supreme Monitor • **{d.strftime('%I:%M:%S:%f %p')}**")
         self.set_author(name='Sicko', icon='https://cdn.discordapp.com/avatars/482851244210389002/1bf84dd7296bd2f96c55b302015f69a7.png?size=128')
 
         if k.get("Announcement") is not None:
