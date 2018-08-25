@@ -153,7 +153,7 @@ class Webhook:
                 self.set_thumbnail(url=k.get("Image"))
                 self.add_field(name="Item", value=k.get("New"), inline=False)
                 self.add_field(name="Price", value=k.get("Price"), inline=False)
-                self.add_field(name="Link", value=f'[DESKTOP]({k.get("Link")})', inline=False)
+                self.add_field(name="Link", value=f'[Desktop]({k.get("Link")})', inline=False)
 
         elif k.get("Restock") is not None:
             if k.get("Link") is not None and k.get("Image") is not None and k.get("Price") is not None:
@@ -161,7 +161,7 @@ class Webhook:
                 self.set_thumbnail(url=k.get("Image"))
                 self.add_field(name="Item", value=k.get("Restock"), inline=False)
                 self.add_field(name="Price", value=k.get("Price"), inline=False)
-                self.add_field(name="Link", value=f'[DESKTOP]({k.get("Link")})', inline=False)
+                self.add_field(name="Link", value=f'[Desktop]({k.get("Link")})', inline=False)
 
         elif k.get("SoldOut") is not None:
             if k.get("Image") is not None:
