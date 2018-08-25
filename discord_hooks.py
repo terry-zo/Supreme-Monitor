@@ -4,7 +4,6 @@ import datetime
 import aiohttp
 import asyncio
 import socket
-import requests
 import datetime
 from collections import defaultdict
 from random import randint
