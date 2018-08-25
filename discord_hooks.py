@@ -1,10 +1,10 @@
 import json
 import time
 import datetime
+
 import aiohttp
 import asyncio
 import socket
-import datetime
 from collections import defaultdict
 from random import randint
 
@@ -68,11 +68,6 @@ class Webhook:
     def set_footer(self, **kwargs):
         self.footer = kwargs.get('text')
         self.footer_icon = kwargs.get('icon')
-        ts = kwargs.get('ts')
-        if ts:
-            self.ts = str(datetime.datetime.utcfromtimestamp(time.time()))
-        else:
-            self.ts = str(datetime.datetime.utcfromtimestamp(ts))
 
     def del_field(self, index):
         self.fields.pop(index)
@@ -141,7 +136,9 @@ class Webhook:
         """
         Send the JSON formated object to the specified `self.url`.
         """
-        self.set_footer(text="Supreme Monitor", ts=True)
+        utc_dt = datetime.datetime.utcnow()
+        d = utc_dt - datetime.timedelta(hours=4)
+        self.set_footer(text=f"Supreme Monitor • {d.strftime('%I:%M:%S:%f %p')}")
         self.set_author(name='Sicko', icon='https://cdn.discordapp.com/avatars/482851244210389002/1bf84dd7296bd2f96c55b302015f69a7.png?size=128')
 
         if k.get("Announcement") is not None:

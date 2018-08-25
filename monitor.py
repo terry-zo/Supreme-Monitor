@@ -50,7 +50,7 @@ async def startup(link, proxies, headers, webhook_url, conn, c):
     html_soup = soup(response, "html.parser")
     products = html_soup.findAll("div", {"class": "inner-article"})
     webhook = Webhook(webhook_url, color=0x0061ff)  # bright blue
-    await webhook.apost(Announcement=f"Monitoring **{len(products)} products** on [supremenewyork](link).")
+    await webhook.apost(Announcement=f"Monitoring **{len(products)} products** on [Supreme]({link}) site.")
 
     async def productInformation(product, s):
         link = f'https://www.supremenewyork.com{product.a["href"]}'
