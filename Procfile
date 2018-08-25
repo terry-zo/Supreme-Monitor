@@ -1,1 +1,1 @@
-monitor: python monitor.py
+sicko: python monitor.py
