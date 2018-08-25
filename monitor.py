@@ -62,7 +62,7 @@ async def startup(link, proxies, headers, webhook_url, conn, c):
             product_html = await fetch(s, link, headers, choice(proxies))
         soupped_html = soup(product_html, "html.parser")
         name = soupped_html.find("title").text
-        price = soupped_html.find("p", {"class": "price"}).span.text
+        price = soupped_html.find("span", {"itemprop": "price"}).text
 
         with conn:
             c.execute("INSERT INTO products VALUES (:name, :link, :image, :sold_out, :price)", {"name": name, "link": link, "image": image, "sold_out": sold_out * 1, "price": price})
@@ -119,7 +119,7 @@ async def monitor(link, proxies, headers, webhook_url, conn, c):
                 product_html = await fetch(s, link, headers, choice(proxies))
             soupped_html = soup(product_html, "html.parser")
             name = soupped_html.find("title").text
-            price = soupped_html.find("p", {"class": "price"}).span.text
+            price = soupped_html.find("span", {"itemprop": "price"}).text
             with conn:
                 c.execute("INSERT INTO products VALUES (:name, :link, :image, :sold_out, :price)", {"name": name, "link": link, "image": image, "sold_out": sold_out * 1, "price": price})
 
