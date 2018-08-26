@@ -85,7 +85,7 @@ async def startup(link, proxies, headers, conn, c):
         all_db_items = c.fetchall()
         print(f"Monitoring {len(all_db_items)} products on Supreme site.")
         webhooks = create_webhooks(0x0061ff)  # bright blue
-        futures = [asyncio.ensure_future(webhook.apost(Announcement=f"Monitoring **{len(all_db_items)} products** on [Supreme]({link}) site.") for webhook in webhooks]
+        futures = [asyncio.ensure_future(webhook.apost(Announcement=f"Monitoring **{len(all_db_items)} products** on [Supreme]({link}) site.")) for webhook in webhooks]
         await asyncio.gather(*futures)
 
 
@@ -95,14 +95,14 @@ async def monitor(link, proxies, headers, conn, c):
     # 1 True
 
     async with aiohttp.ClientSession() as s:
-        response=await fetch(s, link, headers, choice(proxies))
-        html_soup=soup(response, "html.parser")
-        products=html_soup.findAll("div", {"class": "inner-article"})
+        response = await fetch(s, link, headers, choice(proxies))
+        html_soup = soup(response, "html.parser")
+        products = html_soup.findAll("div", {"class": "inner-article"})
 
         async def monitorProduct(product, s, conn, c):
-            link=f'https://www.supremenewyork.com{product.a["href"]}'
-            sold_out="sold out" in product.text
-            database_product=await database_fetch(link, c)
+            link = f'https://www.supremenewyork.com{product.a["href"]}'
+            sold_out = "sold out" in product.text
+            database_product = await database_fetch(link, c)
 
             if database_product is not None:
 
@@ -110,8 +110,8 @@ async def monitor(link, proxies, headers, conn, c):
                 if database_product[3] == True and sold_out == False:
                     print(f"{database_product[0]} restocked!")
                     # Send restock embed
-                    webhooks=create_webhooks(0x00ff4c)  # bright green
-                    futures=[asyncio.ensure_future(webhook.apost(Restock=database_product[0], Link=database_product[1], Image=database_product[2], Price=database_product[4]) for webhook in webhooks]
+                    webhooks = create_webhooks(0x00ff4c)  # bright green
+                    futures = [asyncio.ensure_future(webhook.apost(Restock=database_product[0], Link=database_product[1], Image=database_product[2], Price=database_product[4])) for webhook in webhooks]
                     await asyncio.gather(*futures)
 
                     # Update database
@@ -124,8 +124,8 @@ async def monitor(link, proxies, headers, conn, c):
                 elif database_product[3] == False and sold_out == True:
                     print(f"{database_product[0]} is now sold out.")
                     # Send sold-out embed
-                    webhooks=create_webhooks(0xc11300)  # red
-                    futures=[asyncio.ensure_future(webhook.apost(SoldOut=database_product[0], Image=database_product[2])) for webhook in webhooks]
+                    webhooks = create_webhooks(0xc11300)  # red
+                    futures = [asyncio.ensure_future(webhook.apost(SoldOut=database_product[0], Image=database_product[2])) for webhook in webhooks]
                     await asyncio.gather(*futures)
 
                     # Update database
@@ -135,42 +135,42 @@ async def monitor(link, proxies, headers, conn, c):
                                   {'link': link, 'sold_out': 1})
 
             else:  # Product does not exist in database
-                image=f'https:{product.a.img["src"]}'
-                product_html=await fetch(s, link, headers, choice(proxies))
-                soupped_html=soup(product_html, "html.parser")
-                name=soupped_html.find("title").text
+                image = f'https:{product.a.img["src"]}'
+                product_html = await fetch(s, link, headers, choice(proxies))
+                soupped_html = soup(product_html, "html.parser")
+                name = soupped_html.find("title").text
                 try:
-                    price=soupped_html.find("span", {"itemprop": "price"}).text
+                    price = soupped_html.find("span", {"itemprop": "price"}).text
                 except:
-                    price="$"
+                    price = "$"
 
                 with conn:
                     c.execute("INSERT INTO products VALUES (:name, :link, :image, :sold_out, :price)", {"name": name, "link": link, "image": image, "sold_out": sold_out * 1, "price": price})
 
                 print(f"{name} added to database.")
                 # Send new-product embed
-                webhooks=create_webhooks(0xf2ff00)  # bright yellow
-                futures=[asyncio.ensure_future(webhook.apost(New=name, Link=link, Image=image, Price=price)) for webhook in webhooks]
+                webhooks = create_webhooks(0xf2ff00)  # bright yellow
+                futures = [asyncio.ensure_future(webhook.apost(New=name, Link=link, Image=image, Price=price)) for webhook in webhooks]
                 await asyncio.gather(*futures)
 
-        futures=[asyncio.ensure_future(monitorProduct(product, s, conn, c)) for product in products]
+        futures = [asyncio.ensure_future(monitorProduct(product, s, conn, c)) for product in products]
         await asyncio.gather(*futures)
 
 
 # Returns a list of proxies from designated file name passed as an argument
 def readproxyfile(proxyfile):
     with open(proxyfile, "r") as raw_proxies:
-        proxies=raw_proxies.read().split("\n")
-        proxies_list=[]
+        proxies = raw_proxies.read().split("\n")
+        proxies_list = []
         for individual_proxies in proxies:
             if individual_proxies.strip() != "":
-                p_splitted=individual_proxies.split(":")
+                p_splitted = individual_proxies.split(":")
                 if len(p_splitted) == 2:
                     proxies_list.append("http://" + individual_proxies)
                 if len(p_splitted) == 4:
                     # ip0:port1:user2:pass3
                     # -> username:password@ip:port
-                    p_formatted=f"http://{p_splitted[2]}:{p_splitted[3]}@{p_splitted[0]}:{p_splitted[1]}"
+                    p_formatted = f"http://{p_splitted[2]}:{p_splitted[3]}@{p_splitted[0]}:{p_splitted[1]}"
                     proxies_list.append(p_formatted)
         proxies_list.append(None)
     return proxies_list
@@ -191,5 +191,5 @@ async def database_fetch(link, c):
 
 if __name__ == "__main__":
 
-    loop=asyncio.get_event_loop()
+    loop = asyncio.get_event_loop()
     loop.run_until_complete(initialize())
