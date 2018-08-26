@@ -74,7 +74,7 @@ async def startup(link, proxies, headers, webhook_url, conn, c):
 
         c.execute("SELECT * FROM products")
         all_db_items = c.fetchall()
-        print(f"Monitoring **{len(all_db_items)} products** on Supreme site.")
+        print(f"Monitoring {len(all_db_items)} products on Supreme site.")
         webhook = Webhook(webhook_url, color=0x0061ff)  # bright blue
         await webhook.apost(Announcement=f"Monitoring **{len(all_db_items)} products** on [Supreme]({link}) site.")
 
