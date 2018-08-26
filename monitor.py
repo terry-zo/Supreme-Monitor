@@ -10,8 +10,8 @@ from discord_hooks import Webhook
 
 async def create_webhooks(color=0x0061ff):
     return [
-        Webhook("https://discordapp.com/api/webhooks/483371331912728586/RkTSxPXYqDToGTRFPeqanjtIjD9p7tjDyZTv5r5z90Lc2ONH1kvz7gqQQj6AjnR2mbG_", color),
-        Webhook("https://discordapp.com/api/webhooks/482851244210389002/TYS8VFdEzqHRAyKhJ42CuQ0LPYF2oCDeQKbxc4qeH1aJfYFabUiRvnzfgC4Sg3tjo2lR", color)
+        Webhook("https://discordapp.com/api/webhooks/483371331912728586/RkTSxPXYqDToGTRFPeqanjtIjD9p7tjDyZTv5r5z90Lc2ONH1kvz7gqQQj6AjnR2mbG_", color=color),
+        Webhook("https://discordapp.com/api/webhooks/482851244210389002/TYS8VFdEzqHRAyKhJ42CuQ0LPYF2oCDeQKbxc4qeH1aJfYFabUiRvnzfgC4Sg3tjo2lR", color=color)
     ]
 
 
