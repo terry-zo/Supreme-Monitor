@@ -45,16 +45,20 @@ async def initialize():
 
 # Creates an initial database
 async def startup(link, proxies, headers, webhook_url, conn, c):
+
+    # 0 False
+    # 1 True
+
     async with aiohttp.ClientSession() as s:
         response = await fetch(s, link, headers, choice(proxies))
         html_soup = soup(response, "html.parser")
         products = html_soup.findAll("div", {"class": "inner-article"})
 
-        async def productInformation(product, s):
+        async def productInformation(product, s, conn, c):
             link = f'https://www.supremenewyork.com{product.a["href"]}'
 
             image = f'https:{product.a.img["src"]}'
-            sold_out = product.text == "sold out"
+            sold_out = "sold out" in product.text
 
             product_html = await fetch(s, link, headers, choice(proxies))
             soupped_html = soup(product_html, "html.parser")
@@ -69,7 +73,7 @@ async def startup(link, proxies, headers, webhook_url, conn, c):
 
             print(f"{name} added to database.")
 
-        futures = [asyncio.ensure_future(productInformation(product, s)) for product in products]
+        futures = [asyncio.ensure_future(productInformation(product, s, conn, c)) for product in products]
         await asyncio.gather(*futures)
 
         c.execute("SELECT * FROM products")
@@ -81,33 +85,23 @@ async def startup(link, proxies, headers, webhook_url, conn, c):
 
 # Compares newly fetched supreme site from database
 async def monitor(link, proxies, headers, webhook_url, conn, c):
+    # 0 False
+    # 1 True
+
     async with aiohttp.ClientSession() as s:
         response = await fetch(s, link, headers, choice(proxies))
         html_soup = soup(response, "html.parser")
         products = html_soup.findAll("div", {"class": "inner-article"})
 
-        async def monitorProduct(product, s):
+        async def monitorProduct(product, s, conn, c):
             link = f'https://www.supremenewyork.com{product.a["href"]}'
-            sold_out = product.text == "sold out"
+            sold_out = "sold out" in product.text
             database_product = await database_fetch(link, c)
 
             if database_product is not None:
 
-                # Check if database sold_out = False -> True (Sold Out)
-                if database_product[3] == False and sold_out == True:
-                    print(f"{database_product[0]} is now sold out.")
-                    # Send sold-out embed
-                    webhook = Webhook(webhook_url, color=0xc11300)  # red
-                    await webhook.apost(SoldOut=database_product[0], Image=database_product[2])
-
-                    # Update database
-                    with conn:
-                        c.execute("""UPDATE products SET sold_out = :sold_out
-                                    WHERE link = :link""",
-                                  {'link': link, 'sold_out': sold_out * 1})
-
                 # Check if database sold_out = True -> False (Restock)
-                elif database_product[3] == True and sold_out == False:
+                if database_product[3] == True and sold_out == False:
                     print(f"{database_product[0]} restocked!")
                     # Send restock embed
                     webhook = Webhook(webhook_url, color=0x00ff4c)  # bright green
@@ -117,7 +111,20 @@ async def monitor(link, proxies, headers, webhook_url, conn, c):
                     with conn:
                         c.execute("""UPDATE products SET sold_out = :sold_out
                                     WHERE link = :link""",
-                                  {'link': link, 'sold_out': sold_out * 1})
+                                  {'link': link, 'sold_out': 0})
+
+                # Check if database sold_out = False -> True (Sold Out)
+                elif database_product[3] == False and sold_out == True:
+                    print(f"{database_product[0]} is now sold out.")
+                    # Send sold-out embed
+                    webhook = Webhook(webhook_url, color=0xc11300)  # red
+                    await webhook.apost(SoldOut=database_product[0], Image=database_product[2])
+
+                    # Update database
+                    with conn:
+                        c.execute("""UPDATE products SET sold_out = :sold_out
+                                    WHERE link = :link""",
+                                  {'link': link, 'sold_out': 1})
 
             else:  # Product does not exist in database
                 image = f'https:{product.a.img["src"]}'
@@ -137,7 +144,7 @@ async def monitor(link, proxies, headers, webhook_url, conn, c):
                 webhook = Webhook(webhook_url, color=0xf2ff00)  # bright yellow
                 await webhook.apost(New=name, Link=link, Image=image, Price=price)
 
-        futures = [asyncio.ensure_future(monitorProduct(product, s)) for product in products]
+        futures = [asyncio.ensure_future(monitorProduct(product, s, conn, c)) for product in products]
         await asyncio.gather(*futures)
 
 
