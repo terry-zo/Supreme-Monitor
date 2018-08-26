@@ -84,7 +84,7 @@ async def startup(link, proxies, headers, conn, c):
         c.execute("SELECT * FROM products")
         all_db_items = c.fetchall()
         print(f"Monitoring {len(all_db_items)} products on Supreme site.")
-        webhooks = create_webhooks(0x0061ff)  # bright blue
+        webhooks = await create_webhooks(0x0061ff)  # bright blue
         futures = [asyncio.ensure_future(webhook.apost(Announcement=f"Monitoring **{len(all_db_items)} products** on [Supreme]({link}) site.")) for webhook in webhooks]
         await asyncio.gather(*futures)
 
@@ -110,7 +110,7 @@ async def monitor(link, proxies, headers, conn, c):
                 if database_product[3] == True and sold_out == False:
                     print(f"{database_product[0]} restocked!")
                     # Send restock embed
-                    webhooks = create_webhooks(0x00ff4c)  # bright green
+                    webhooks = await create_webhooks(0x00ff4c)  # bright green
                     futures = [asyncio.ensure_future(webhook.apost(Restock=database_product[0], Link=database_product[1], Image=database_product[2], Price=database_product[4])) for webhook in webhooks]
                     await asyncio.gather(*futures)
 
@@ -124,7 +124,7 @@ async def monitor(link, proxies, headers, conn, c):
                 elif database_product[3] == False and sold_out == True:
                     print(f"{database_product[0]} is now sold out.")
                     # Send sold-out embed
-                    webhooks = create_webhooks(0xc11300)  # red
+                    webhooks = await create_webhooks(0xc11300)  # red
                     futures = [asyncio.ensure_future(webhook.apost(SoldOut=database_product[0], Image=database_product[2])) for webhook in webhooks]
                     await asyncio.gather(*futures)
 
@@ -149,7 +149,7 @@ async def monitor(link, proxies, headers, conn, c):
 
                 print(f"{name} added to database.")
                 # Send new-product embed
-                webhooks = create_webhooks(0xf2ff00)  # bright yellow
+                webhooks = await create_webhooks(0xf2ff00)  # bright yellow
                 futures = [asyncio.ensure_future(webhook.apost(New=name, Link=link, Image=image, Price=price)) for webhook in webhooks]
                 await asyncio.gather(*futures)
 
