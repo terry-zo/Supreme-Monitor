@@ -117,7 +117,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
         html_soup = soup(response, "html.parser")
         products = html_soup.findAll("div", {"class": "inner-article"})
 
-        async def monitorProduct(product, s, mongoSupreme):
+        async def monitorProduct(product, s, mongoSupreme, proxies):
             link = f'https://www.supremenewyork.com{product.a["href"]}'
             sold_out = "sold out" in product.text
             database_product = mongoSupreme.database_fetch(link)
@@ -146,6 +146,18 @@ async def monitor(link, proxies, headers, mongoSupreme):
                     # Update database
                     mongoSupreme.update_product({"link": link}, {"sold_out": sold_out})
 
+                if database_product["price"] == "$":
+                    product_html = await fetch(s, database_product["link"], headers, choice(proxies))
+                    soupped_html = soup(product_html, "html.parser")
+                    try:
+                        price = soupped_html.find("span", {"itemprop": "price"}).text
+
+                        # Update database
+                        mongoSupreme.update_product({"link": database_product["link"]}, {"price": price})
+
+                    except Exception as e:
+                        print(f"{e}")
+
             else:  # Product does not exist in database
                 image = f'https:{product.a.img["src"]}'
                 product_html = await fetch(s, link, headers, choice(proxies))
@@ -164,7 +176,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
                 futures = [asyncio.ensure_future(webhook.apost(New=name, Link=link, Image=image, Price=price)) for webhook in webhooks]
                 await asyncio.gather(*futures)
 
-        futures = [asyncio.ensure_future(monitorProduct(product, s, mongoSupreme)) for product in products]
+        futures = [asyncio.ensure_future(monitorProduct(product, s, mongoSupreme, proxies)) for product in products]
         await asyncio.gather(*futures)
 
 
