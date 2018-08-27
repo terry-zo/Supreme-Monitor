@@ -102,7 +102,7 @@ async def startup(link, proxies, headers, mongoSupreme):
         all_db_items = mongoSupreme.keys.count_documents({})
         print(f"Monitoring {all_db_items} products on Supreme site.")
         webhooks = await create_webhooks(0x0061ff)  # bright blue
-        futures = [asyncio.ensure_future(webhook.apost(Announcement=f"Monitoring **{len(all_db_items)} products** on [Supreme]({link}) site.")) for webhook in webhooks]
+        futures = [asyncio.ensure_future(webhook.apost(Announcement=f"Monitoring **{all_db_items} products** on [Supreme]({link}) site.")) for webhook in webhooks]
         await asyncio.gather(*futures)
 
 
