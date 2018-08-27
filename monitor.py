@@ -61,6 +61,7 @@ async def initialize():
     if mongoSupreme.keys.find_one() is None:
         await startup("http://www.supremenewyork.com/shop/all", proxies, generalHeaders, mongoSupreme)
     else:
+        print("Monitoring http://www.supremenewyork.com/shop/all")
         while True:
             await monitor("http://www.supremenewyork.com/shop/all", proxies, generalHeaders, mongoSupreme)
             time.sleep(delay)
@@ -72,7 +73,7 @@ async def startup(link, proxies, headers, mongoSupreme):
     # 0 False
     # 1 True
 
-    print("Scraping supremenewyork")
+    print("Scraping http://www.supremenewyork.com/shop/all")
 
     async with aiohttp.ClientSession() as s:
         response = await fetch(s, link, headers, choice(proxies))
@@ -110,8 +111,6 @@ async def startup(link, proxies, headers, mongoSupreme):
 async def monitor(link, proxies, headers, mongoSupreme):
     # 0 False
     # 1 True
-
-    print("Monitoring supremenewyork")
 
     async with aiohttp.ClientSession() as s:
         response = await fetch(s, link, headers, choice(proxies))
