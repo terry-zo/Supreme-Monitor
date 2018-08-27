@@ -39,7 +39,7 @@ class SupremeDatabase(object):
             print(f"{name} already exists in database.")
 
     def update_product(self, _query, _set):
-        self.keys.find_one_and_update(_query, _set)
+        self.keys.find_one_and_update(_query, {"$set": _set})
 
 
 async def create_webhooks(color=0x0061ff):
