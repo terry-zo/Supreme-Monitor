@@ -147,7 +147,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
                     mongoSupreme.update_product({"link": link}, {"sold_out": sold_out})
 
                 if database_product["price"] == "$":
-                    product_html = await fetch(s, database_product["link"], headers, choice(proxies))
+                    product_html = await fetch(s, database_product["link"], {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36"}, choice(proxies))
                     soupped_html = soup(product_html, "html.parser")
                     try:
                         price = soupped_html.find("span", {"itemprop": "price"}).text
