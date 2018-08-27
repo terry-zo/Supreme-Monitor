@@ -146,7 +146,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
                     # Update database
                     mongoSupreme.update_product({"link": link}, {"sold_out": sold_out})
 
-                if database_product["price"] == "$":
+                if database_product["price"] == "$" or database_product["name"] == "Supreme":
                     product_html = await fetch(s, database_product["link"], {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36"}, choice(proxies))
                     soupped_html = soup(product_html, "html.parser")
                     name = soupped_html.find("title").text
@@ -155,9 +155,11 @@ async def monitor(link, proxies, headers, mongoSupreme):
 
                         # Update database
                         mongoSupreme.update_product({"link": database_product["link"]}, {"name": name, "price": price})
+                        print(f"Updated {name}")
 
                     except Exception as e:
                         print(f"{e}")
+
 
             else:  # Product does not exist in database
                 image = f'https:{product.a.img["src"]}'
