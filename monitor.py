@@ -1,12 +1,12 @@
 import aiohttp
 import asyncio
 import math
-import sqlite3
 import time
 from pymongo import MongoClient
 from bs4 import BeautifulSoup as soup
-from random import randint, choice
+from random import choice
 from discord_hooks import Webhook
+
 
 
 class SupremeDatabase(object):
@@ -24,7 +24,6 @@ class SupremeDatabase(object):
 
     # Inserts a supreme product into the database and stores it for further use
     def insert_product(self, name, link, image, sold_out, price):
-        keys = self.keys
         user_key = self.keys.find_one({"link": link})
         if user_key is None:
             post = {
@@ -125,7 +124,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
             if database_product is not None:
 
                 # Check if database sold_out = True -> False (Restock)
-                if database_product["sold_out"] == True and sold_out == False:
+                if database_product["sold_out"] and not sold_out:
                     print(f"{database_product['name']} restocked!")
                     # Send restock embed
                     webhooks = await create_webhooks(0x00ff4c)  # bright green
@@ -136,7 +135,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
                     mongoSupreme.update_product({"link": link}, {"sold_out": sold_out})
 
                 # Check if database sold_out = False -> True (Sold Out)
-                elif database_product["sold_out"] == False and sold_out == True:
+                elif not database_product["sold_out"] and sold_out:
                     print(f"{database_product['name']} is now sold out.")
                     # Send sold-out embed
                     webhooks = await create_webhooks(0xc11300)  # red
@@ -159,7 +158,6 @@ async def monitor(link, proxies, headers, mongoSupreme):
 
                     except Exception as e:
                         print(f"{e}")
-
 
             else:  # Product does not exist in database
                 image = f'https:{product.a.img["src"]}'
