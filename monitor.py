@@ -140,7 +140,7 @@ async def monitor(link, proxies, headers, mongoSupreme):
                     print(f"{database_product['name']} is now sold out.")
                     # Send sold-out embed
                     webhooks = await create_webhooks(0xc11300)  # red
-                    futures = [asyncio.ensure_future(webhook.apost(SoldOut=database_product["name"], Image=database_product["name"])) for webhook in webhooks]
+                    futures = [asyncio.ensure_future(webhook.apost(SoldOut=database_product["name"], Image=database_product["image"])) for webhook in webhooks]
                     await asyncio.gather(*futures)
 
                     # Update database
