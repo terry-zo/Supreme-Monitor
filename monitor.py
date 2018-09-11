@@ -13,7 +13,7 @@ class SupremeDatabase(object):
     """A mongo database that contains accumulated supreme products."""
 
     def __init__(self):
-        mongoURL = "mongodb://terry:terry123@ds133632.mlab.com:33632/monitors"
+        mongoURL = "mongodb://terry:magic12@ds151402.mlab.com:51402/monitors"
         client = MongoClient(mongoURL)
         db = client["monitors"]
         self.keys = db["supreme"]
