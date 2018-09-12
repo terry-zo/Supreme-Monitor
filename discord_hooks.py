@@ -129,7 +129,6 @@ class Webhook:
 
         data["username"] = "Sicko"
         data["avatar_url"] = "https://cdn.discordapp.com/avatars/482851244210389002/1bf84dd7296bd2f96c55b302015f69a7.png?size=128"
-        print(json.dumps(data, indent=4))
         return json.dumps(data, indent=4)
 
     async def apost(self, **k):
@@ -167,6 +166,7 @@ class Webhook:
                 self.add_field(name="Item", value=k.get("SoldOut"), inline=False)
 
         try:
+            print(self.json)
             async with aiohttp.ClientSession(headers={'Content-Type': 'application/json'}, connector=aiohttp.TCPConnector(family=socket.AF_INET, verify_ssl=False,)) as session:
                 async with session.post(self.url, data=self.json, timeout=7) as response:
                     return ""
