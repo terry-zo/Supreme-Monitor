@@ -166,7 +166,6 @@ class Webhook:
                 self.add_field(name="Item", value=k.get("SoldOut"), inline=False)
 
         try:
-            print(self.json)
             async with aiohttp.ClientSession(headers={'Content-Type': 'application/json'}, connector=aiohttp.TCPConnector(family=socket.AF_INET, verify_ssl=False,)) as session:
                 async with session.post(self.url, data=self.json, timeout=7) as response:
                     return ""
