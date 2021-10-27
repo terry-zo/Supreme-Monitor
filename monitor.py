@@ -13,7 +13,7 @@ class SupremeDatabase(object):
     """A mongo database that contains accumulated supreme products."""
 
     def __init__(self):
-        mongoURL = "mongodb://terry:magic12@ds151402.mlab.com:51402/monitors"
+        mongoURL = "mongodb://mongo_url"
         client = MongoClient(mongoURL)
         db = client["monitors"]
         self.keys = db["supreme"]
@@ -42,12 +42,7 @@ class SupremeDatabase(object):
 
 
 async def create_webhooks(color=0x0061ff):
-    return [
-        Webhook("https://discordapp.com/api/webhooks/483371331912728586/RkTSxPXYqDToGTRFPeqanjtIjD9p7tjDyZTv5r5z90Lc2ONH1kvz7gqQQj6AjnR2mbG_", color=color),
-        Webhook("https://discordapp.com/api/webhooks/482851244210389002/TYS8VFdEzqHRAyKhJ42CuQ0LPYF2oCDeQKbxc4qeH1aJfYFabUiRvnzfgC4Sg3tjo2lR", color=color),
-        Webhook("https://discordapp.com/api/webhooks/490772097803485187/FneUEEubBltcqWA2tjNRd6B12ijNgkniY0SUQNPmAtjdPU8TW6J9m37lFM1DnDEkNDK7", color=color),
-        Webhook("https://discordapp.com/api/webhooks/506171765383233536/Wj3KwajVOCX_8B-I70qEgNEuH9MTGXL7-3v_uN-LD_emB_pkZCByg2TBpqWAmbb46aA7", color=color)
-    ]
+    return Webhook("webhook_url", color=color)
 
 
 # Wrapper function
